@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azki Farm - Kalkulator Pembenihan Ikan Lele</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .baby-icon {
+            font-size: 60px;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.95;
+        }
+        
+        .location-badge {
+            background: rgba(255,255,255,0.3);
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        
+        .menu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 15px;
+            background: #f8f9fa;
+            justify-content: center;
+        }
+        
+        .menu-btn {
+            padding: 10px 15px;
+            border: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .menu-btn:hover, .menu-btn.active {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .calculator {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .calculator.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-title {
+            color: #764ba2;
+            font-size: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+            font-size: 13px;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-calculate {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+            border-left: 5px solid #4CAF50;
+            border-radius: 15px;
+            display: none;
+            animation: slideIn 0.5s;
+        }
+        
+        .result.show {
+            display: block;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .result h3 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .result-item {
+            margin: 8px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .result-label {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .result-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+        
+        .info-card {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border-left: 5px solid #f39c12;
+        }
+        
+        .info-card h4 {
+            color: #d63031;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        
+        .info-card ul {
+            margin-left: 20px;
+            font-size: 13px;
+            color: #2d3436;
+        }
+        
+        .info-card li {
+            margin: 5px 0;
+        }
+        
+        .tips-box {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 15px;
+        }
+        
+        .tips-box h4 {
+            color: #0984e3;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        
+        .tips-box p {
+            font-size: 13px;
+            color: #2d3436;
+            line-height: 1.6;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 12px;
+        }
+        
+        .footer-badge {
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-top: 10px;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .feature-item {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .feature-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .feature-icon {
+            font-size: 30px;
+            margin-bottom: 5px;
+        }
+        
+        .feature-text {
+            font-size: 12px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .menu-btn {
+                font-size: 11px;
+                padding: 8px 12px;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="baby-icon">👶🐟</div>
+            <h1>Azki Farm</h1>
+            <p>Kalkulator Pembenihan Ikan Lele Ceria</p>
+            <div class="location-badge">📍 Dibangun dan dikembangkan di Desa Siluman</div>
+        </div>
+        
+        <div class="menu">
+            <button class="menu-btn active" onclick="showCalc('kolam')">🏊 Kolam</button>
+            <button class="menu-btn" onclick="showCalc('induk')">🐟 Induk</button>
+            <button class="menu-btn" onclick="showCalc('pakan')">🍽️ Pakan</button>
+            <button class="menu-btn" onclick="showCalc('hormon')">💉 Hormon</button>
+            <button class="menu-btn" onclick="showCalc('telur')">🥚 Telur</button>
+            <button class="menu-btn" onclick="showCalc('larva')">🐠 Larva</button>
+            <button class="menu-btn" onclick="showCalc('biofloc')">🌊 Biofloc</button>
+            <button class="menu-btn" onclick="showCalc('biaya')">💰 Biaya</button>
+        </div>
+        
+        <div class="content">
+            <!-- Kalkulator Luas Kolam -->
+            <div id="kolam" class="calculator active">
+                <div class="section-title">
+                    <span>🏊</span>
+                    <span>Kalkulator Luas Kolam</span>
+                </div>
+                
+                <div class="info-card">
+                    <h4>📋 Standar Kolam Terpal</h4>
+                    <ul>
+                        <li>Ukuran ideal: Diameter 4 meter</li>
+                        <li>Kedalaman air: 100-120 cm</li>
+                        <li>Terpal kualitas A5 (daya tahan 2 tahun)</li>
+                        <li>Sistem aerasi wajib untuk biofloc</li>
+                    </ul>
+                </div>
+                
+                <div class="form-group">
+                    <label>Panjang Kolam (meter)</label>
+                    <input type="number" id="panjang" placeholder="Contoh: 4" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>Lebar/Diameter Kolam (meter)</label>
+                    <input type="number" id="lebar" placeholder="Contoh: 4" step="0.1">
+                </div>
+                <button class="btn-calculate" onclick="hitungKolam()">Hitung Luas</button>
+                <div id="result-kolam" class="result">
+                    <h3>Hasil Perhitungan</h3>
+                    <div class="result-item">
+                        <span class="result-label">Luas Kolam</span>
+                        <span class="result-value" id="luas-kolam">0 m²</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Volume Air</span>
+                        <span class="result-value" id="volume-air">0 liter</span>
+                    </div>
+                </div>
+                
+                <div class="tips-box">
+                    <h4>💡 Tips Kolam Sehat</h4>
+                    <p>Pastikan kolam mendapat sirkulasi udara yang baik. Untuk sistem biofloc, pasang aerator minimal 200 liter/menit. Jaga ketinggian air 100-120 cm untuk hasil optimal.</p>
+                </div>
+            </div>
+            
+            <!-- Kalkulator Induk -->
+            <div id="induk" class="calculator">
+                <div class="section-title">
+                    <span>🐟</span>
+                    <span>Kalkulator Jumlah Induk</span>
+                </div>
+                
+                <div class="info-card">
+                    <h4>📋 Ciri Induk Berkualitas</h4>
+                    <ul>
+                        <li><strong>Betina:</strong> Perut membesar, alat kelamin memerah, umur minimal 1 tahun</li>
+                        <li><strong>Jantan:</strong> Alat kelamin jelas, warna kemerahan, gerakan lincah</li>
+                        <li>Berat ideal: 2-3 kg per ekor</li>
+                        <li>Rasio ideal: 1 jantan : 2 betina</li>
+                    </ul>
+                </div>
+                
+                <div class="form-group">
+                    <label>Luas Kolam (m²)</label>
+                    <input type="number" id="luas-induk" placeholder="Contoh: 12.56" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>Padat Tebar (ekor/m²)</label>
+                    <input type="number" id="padat-tebar" placeholder="Contoh: 5" value="5" step="0.1">
+                </div>
+                <button class="btn-calculate" onclick="hitungInduk()">Hitung Jumlah Induk</button>
+                <div id="result-induk" class="result">
+                    <h3>Hasil Perhitungan</h3>
+                    <div class="result-item">
+                        <span class="result-label">Jumlah Induk Maksimal</span>
+                        <span class="result-value" id="jumlah-induk">0 ekor</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Induk Jantan (5%)</span>
+                        <span class="result-value" id="induk-jantan">0 ekor</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Induk Betina (95%)</span>
+                        <span class="result-value" id="induk-betina">0 ekor</span>
+                    </div>
+                </div>
+                
+                <div class="tips-box">
+                    <h4>💡 Tips Pemeliharaan Induk</h4>
+                    <p>Beri pakan berkualitas dengan protein 30-35%. Lakukan pemijahan pada sore hari (16.00-17.00). Induk yang baik bisa menghasilkan 70.000 telur per kg berat badan.</p>
+                </div>
+            </div>
+            
+            <!-- Kalkulator Pakan -->
+            <div id="pakan" class="calculator">
+                <div class="section-title">
+                    <span>🍽️</span>
+                    <span>Kalkulator Kebutuhan Pakan</span>
+                </div>
+                
+                <div class="info-card">
+                    <h4>📋 Standar Pakan</h4>
+                    <ul>
+                        <li><strong>Starter 1:</strong> Protein 37%, ukuran 1mm</li>
+                        <li><strong>Starter 2:</strong> Protein 30%, ukuran 1mm</li>
+                        <li><strong>Grower:</strong> Protein 30%, ukuran 2mm</li>
+                        <li><strong>Finisher:</strong> Protein 25-30%, ukuran 3mm</li>
+                    </ul>
+                </div>
+                
+                <div class="form-group">
+                    <label>Jumlah Induk/Larva (ekor)</label>
+                    <input type="number" id="jumlah-ikan" placeholder="Contoh: 100">
+                </div>
+                <div class="form-group">
+                    <label>Rata-rata Bobot Ikan (gram)</label>
+                    <input type="number" id="bobot-ikan" placeholder="Contoh: 1500" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>Feeding Rate (%)</label>
+                    <input type="number" id="feeding-rate" placeholder="Contoh: 1-3" value="1" step="0.1">
+                </div>
+                <button class="btn-calculate" onclick="hitungPakan()">Hitung Kebutuhan Pakan</button>
+                <div id="result-pakan" class="result">
+                    <h3>Hasil Perhitungan</h3>
+                    <div class="result-item">
+                        <span class="result-label">Kebutuhan Pakan per Hari</span>
+                        <span class="result-value" id="kebutuhan-pakan">0 kg/hari</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Kebutuhan per Minggu</span>
+                        <span class="result-value" id="kebutuhan-minggu">0 kg</span>
+                    </div>
+                </div>
+                
+                <div class="tips-box">
+                    <h4>💡 Tips Pemberian Pakan</h4>
+                    <p>Beri pakan 4 kali sehari (pagi, siang, sore, malam). Larva usia 1-3 hari tidak perlu pakan (masih ada kuning telur). Hari ke-4 beri cacing sutera. Hindari overfeeding agar air tidak tercemar.</p>
+                </div>
+            </div>
+            
+            <!-- Kalkulator Hormon -->
+            <div id="hormon" class="calculator">
+                <div class="section-title">
+                    <span>💉</span>
+                    <span>Kalkulator Hormon Ovaprim</span>
+                </div>
+                
+                <div class="info-card">
+                    <h4>📋 Standar Penyuntikan</h4>
+                    <ul>
+                        <li>Dosis: 0.2-0.3 ml per kg berat induk</li>
+                        <li>Waktu laten: 10-12 jam setelah penyuntikan</li>
+                        <li>Penyuntikan dilakukan sore hari (16.00-17.00)</li>
+                        <li>Pemijahan terjadi pukul 24.00-04.00</li>
+                    </ul>
+                </div>
+                
+                <div class="form-group">
+                    <label>Bobot Induk Betina (kg)</label>
+                    <input type="number" id="bobot-betina" placeholder="Contoh: 1.5" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Bobot Induk Jantan (kg)</label>
+                    <input type="number" id="bobot-jantan" placeholder="Contoh: 1.2" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Dosis Hormon (ml/kg)</label>
+                    <input type="number" id="dosis-hormon" placeholder="Contoh: 0.2" value="0.2" step="0.01">
+                </div>
+                <button class="btn-calculate" onclick="hitungHormon()">Hitung Kebutuhan Hormon</button>
+                <div id="result-hormon" class="result">
+                    <h3>Hasil Perhitungan</h3>
+                    <div class="result-item">
+                        <span class="result-label">Total Hormon Ovaprim</span>
+                        <span class="result-value" id="total-hormon">0 ml</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Waktu Penyuntikan</span>
+                        <span class="result-value" id="waktu-suntik">16.00-17.00</span>
+                    </div>
+                </div>
+                
+                <div class="tips-box">
+                    <h4>💡 Tips Penyuntikan</h4>
+                    <p>Suntik di bagian punggung (dorsal) dengan sudut 45°. Setelah penyuntikan, masukkan induk ke kolam pemijahan yang sudah siap dengan kakaban. Tutup kolam rapat untuk suasana gelap dan tenang.</p>
+                </div>
+            </div>
+            
+            <!-- Kalkulator Telur -->
+            <div id="telur" class="calculator">
+                <div class="section-title">
+                    <span>🥚</span>
+                    <span>Kalkulator Produksi Telur</span>
+                </div>
+                
+                <div class="info-card">
+                    <h4>📋 Fekunditas Ikan Lele</h4>
+                    <ul>
+                        <li>Produksi telur: 70.000-100.000 butir per kg induk</li>
+                        <li>Tingkat pembuahan: 86-97% (rata-rata 94%)</li>
+                        <li>Tingkat penetasan: 78-94% (rata-rata 89.7%)</li>
+                        <li>Telur menetas dalam 24 jam</li>
+                    </ul>
+                </div>
+                
+                <div class="form-group">
+                    <label>Bobot Induk Betina (kg)</label>
+                    <input type="number" id="bobot-betina-telur" placeholder="Contoh: 1.5" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Jumlah Telur per kg (butir)</label>
+                    <input type="number" id="telur-per-kg" placeholder="Contoh: 100000" value="100000">
+                </div>
+                <button class="btn-calculate" onclick="hitungTelur()">Hitung Produksi Telur</button>
+                <div id="result-telur" class="result">
+                    <h3>Hasil Perhitungan</h3>
+                    <div class="result-item">
+                        <span class="result-label">Total Telur</span>
+                        <span class="result-value" id="total-telur">0 butir</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Telur Terbuahi (94%)</span>
+                        <span class="result-value" id="telur-terbuahi">0 butir</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Telur Menetas (89.7%)</span>
+                        <span class="result-value" id="telur-menetas">0 butir</span>
+                    </div>
+                </div>
+                
+                <div class="tips-box">
+                    <h4>💡 Tips Penetasan Telur</h4>
+                    <p>Pasang kakaban (ijuk) sebagai tempat menempel telur. Beri aerasi untuk oksigen terlarut. Jaga suhu air 22-32°C. Setelah 24 jam, telur akan menetas menjadi larva. Angkat induk setelah bertelur untuk mencegah kanibalisme.</p>
+                </div>
+            </div>
+            
+            <!-- Kalkulator Larva -->
+            <div id="larva" class="calculator">
+                <div class="section-title">
+                    <span>🐠</span>
+                    <span>Prediksi Jumlah Larva</span>
+                </div>
+                
+                <div class="info-card">
+                    <h4>📋 Pemeliharaan Larva</h4>
+                    <ul>
+                        <li>Hari 1-3: Tidak perlu pakan (kuning telur)</li>
+                        <li>Hari 4-10: Cacing sutera 4x sehari</li>
+                        <li>Hari 11-20: Pelet halus + cacing</li>
+                        <li>Sortasi setiap 10 hari</li>
+                        <li>Benih siap jual: 20-35 hari (ukuran 2-6 cm)</li>
+                    </ul>
+                </div>
+                
+                <div class="form-group">
+                    <label>Jumlah Induk Betina (ekor)</label>
+                    <input type="number" id="jumlah-betina" placeholder="Contoh: 37">
+                </div>
+                <div class="form-group">
+                    <label>Bobot Rata-rata Induk (kg)</label>
+                    <input type="number" id="bobot-rata" placeholder="Contoh: 1.5" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Fekunditas (telur/kg)</label>
+                    <input type="number" id="fekunditas" placeholder="Contoh: 100000" value="100000">
+                </div>
+                <button class="btn-calculate" onclick="hitungLarva()">Prediksi Larva</button>
+                <div id="result-larva" class="result">
+                    <h3>Hasil Perhitungan</h3>
+                    <div class="result-item">
+                        <span class="result-label">Total Telur</span>
+                        <span class="result-value" id="prediksi-telur">0 butir</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Prediksi Larva (89.7%)</span>
+                        <span class="result-value" id="prediksi-larva">0 ekor</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Benih Siap Jual (70%)</span>
+                        <span class="result-value" id="benih-siap">0 ekor</span>
+                    </div>
+                </div>
+                
+                <div class="tips-box">
+                    <h4>💡 Tips Pemeliharaan Larva</h4>
+                    <p>Padat tebar larva: 50-100 ekor/liter. Ganti air 30% setiap hari. Suhu optimal 26-28°C. Lakukan sortasi untuk mencegah kanibalisme. Benih ukuran 2-3 cm siap jual setelah 20 hari.</p>
+                </div>
+            </div>
+            
+            <!-- Info Biofloc -->
+            <div id="biofloc" class="calculator">
+                <div class="section-title">
+                    <span>🌊</span>
+                    <span>Sistem Biofloc</span>
+                </div>
+                
+                <div class="info-card">
+                    <h4>📋 Komponen Biofloc (4 Kolam)</h4>
+                    <ul>
+                        <li>Kolam terpal diameter 4m (4 unit)</li>
+                        <li>Blower/aerator 200 liter/menit</li>
+                        <li>Probiotik (Bacillus & Lactobacillus)</li>
+                        <li>Molase/tetes tebu</li>
+                        <li>Kapur dan garam non-yodium</li>
+                        <li>Pakan protein 30-37%</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">🎯</div>
+                        <div class="feature-text">Produksi 200kg/kolam/siklus</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">⏱️</div>
+                        <div class="feature-text">Panen 60-90 hari</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">💧</div>
+                        <div class="feature-text">Hemat air 90%</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📈</div>
+                        <div class="feature-text">Padat tebar tinggi</div>
+                    </div>
+                </div>
+                
+                <div class="tips-box">
+                    <h4>💡 Keuntungan Biofloc</h4>
+                    <p>Sistem biofloc memanfaatkan mikroorganisme untuk mengolah limbah menjadi pakan alami. Hemat air, hemat pakan, dan produksi lebih tinggi. Cocok untuk lahan terbatas. Butuh aerasi konstan dan monitoring pH (6-9) serta suhu (22-32°C).</p>
+                </div>
+            </div>
+            
+            <!-- Kalkulator Biaya -->
+            <div id="biaya" class="calculator">
+                <div class="section-title">
+                    <span>💰</span>
+                    <span>Estimasi Biaya Produksi</span>
+                </div>
+                
+                <div class="info-card">
+                    <h4>📋 Komponen Biaya (4 Kolam)</h4>
+                    <ul>
+                        <li><strong>Infrastruktur:</strong> Kolam, atap, instalasi (Rp 8-12 juta)</li>
+                        <li><strong>Benih:</strong> 10.000 ekor (Rp 500.000-1.000.000)</li>
+                        <li><strong>Pakan:</strong> Starter-Grower-Finisher (Rp 2-3 juta)</li>
+                        <li><strong>Obat & Vitamin:</strong> Probiotik, antibiotik (Rp 300.000)</li>
+                        <li><strong>Peralatan:</strong> Aerator, pompa, genset (Rp 1-2 juta)</li>
+                    </ul>
+                </div>
+                
+                <div class="form-group">
+                    <label>Jumlah Kolam</label>
+                    <select id="jumlah-kolam">
+                        <option value="4">4 Kolam</option>
+                        <option value="6">6 Kolam</option>
+                        <option value="8">8 Kolam</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Target Produksi per Kolam (kg)</label>
+                    <input type="number" id="target-produksi" placeholder="Contoh: 200" value="200">
+                </div>
+                <button class="btn-calculate" onclick="hitungBiaya()">Hitung Estimasi Biaya</button>
+                <div id="result-biaya" class="result">
+                    <h3>Estimasi Biaya Total</h3>
+                    <div class="result-item">
+                        <span class="result-label">Investasi Awal</span>
+                        <span class="result-value" id="investasi">Rp 0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Biaya Operasional</span>
+                        <span class="result-value" id="operasional">Rp 0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Total Biaya</span>
+                        <span class="result-value" id="total-biaya">Rp 0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Estimasi Pendapatan</span>
+                        <span class="result-value" id="pendapatan">Rp 0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Estimasi Laba</span>
+                        <span class="result-value" id="estimasi-laba">Rp 0</span>
+                    </div>
+                </div>
+                
+                <div class="tips-box">
+                    <h4>💡 Tips Efisiensi Biaya</h4>
+                    <p>Gunakan pakan alternatif (daun lompong, enceng gondok) untuk mengurangi biaya pakan 20-30%. Buat probiotik sendiri dari bahan lokal. Manfaatkan sinar matahari untuk pemanas air alami. Rawat peralatan dengan baik untuk memperpanjang umur pakai.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>👶🐟 <strong>Azki Farm</strong> 👶🐟</p>
+            <p>Kalkulator Pembenihan Ikan Lele Ceria</p>
+            <div class="footer-badge">
+                📍 Dibangun dan dikembangkan di Desa Siluman
+            </div>
+            <p style="margin-top: 10px; font-size: 11px;">© 2025 Azki Farm - Berbasis Web</p>
+        </div>
+    </div>
+    
+    <script>
+        function showCalc(id) {
+            document.querySelectorAll('.calculator').forEach(calc => {
+                calc.classList.remove('active');
+            });
+            document.querySelectorAll('.menu-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(id).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        function hitungKolam() {
+            const panjang = parseFloat(document.getElementById('panjang').value) || 0;
+            const lebar = parseFloat(document.getElementById('lebar').value) || 0;
+            const luas = panjang * lebar;
+            const volume = luas * 1.2 * 1000; // Kedalaman 1.2m ke liter
+            
+            document.getElementById('luas-kolam').textContent = luas.toFixed(2) + ' m²';
+            document.getElementById('volume-air').textContent = volume.toLocaleString() + ' liter';
+            document.getElementById('result-kolam').classList.add('show');
+        }
+        
+        function hitungInduk() {
+            const luas = parseFloat(document.getElementById('luas-induk').value) || 0;
+            const padat = parseFloat(document.getElementById('padat-tebar').value) || 5;
+            const total = Math.floor(luas * padat);
+            const jantan = Math.floor(total * 0.05);
+            const betina = total - jantan;
+            
+            document.getElementById('jumlah-induk').textContent = total + ' ekor';
+            document.getElementById('induk-jantan').textContent = jantan + ' ekor';
+            document.getElementById('induk-betina').textContent = betina + ' ekor';
+            document.getElementById('result-induk').classList.add('show');
+        }
+        
+        function hitungPakan() {
+            const jumlah = parseFloat(document.getElementById('jumlah-ikan').value) || 0;
+            const bobot = parseFloat(document.getElementById('bobot-ikan').value) || 0;
+            const fr = parseFloat(document.getElementById('feeding-rate').value) || 1;
+            const pakan = (jumlah * bobot * fr / 100) / 1000; // ke kg
+            const minggu = pakan * 7;
+            
+            document.getElementById('kebutuhan-pakan').textContent = pakan.toFixed(3) + ' kg/hari';
+            document.getElementById('kebutuhan-minggu').textContent = minggu.toFixed(2) + ' kg';
+            document.getElementById('result-pakan').classList.add('show');
+        }
+        
+        function hitungHormon() {
+            const betina = parseFloat(document.getElementById('bobot-betina').value) || 0;
+            const jantan = parseFloat(document.getElementById('bobot-jantan').value) || 0;
+            const dosis = parseFloat(document.getElementById('dosis-hormon').value) || 0.2;
+            const total = (betina + jantan) * dosis;
+            
+            document.getElementById('total-hormon').textContent = total.toFixed(2) + ' ml';
+            document.getElementById('result-hormon').classList.add('show');
+        }
+        
+        function hitungTelur() {
+            const bobot = parseFloat(document.getElementById('bobot-betina-telur').value) || 0;
+            const perKg = parseFloat(document.getElementById('telur-per-kg').value) || 100000;
+            const total = bobot * perKg;
+            const terbuahi = Math.floor(total * 0.94);
+            const menetas = Math.floor(total * 0.897);
+            
+            document.getElementById('total-telur').textContent = total.toLocaleString() + ' butir';
+            document.getElementById('telur-terbuahi').textContent = terbuahi.toLocaleString() + ' butir';
+            document.getElementById('telur-menetas').textContent = menetas.toLocaleString() + ' butir';
+            document.getElementById('result-telur').classList.add('show');
+        }
+        
+        function hitungLarva() {
+            const jumlah = parseFloat(document.getElementById('jumlah-betina').value) || 0;
+            const bobot = parseFloat(document.getElementById('bobot-rata').value) || 0;
+            const fekunditas = parseFloat(document.getElementById('fekunditas').value) || 100000;
+            const totalTelur = jumlah * bobot * fekunditas;
+            const larva = Math.floor(totalTelur * 0.897);
+            const benih = Math.floor(larva * 0.7);
+            
+            document.getElementById('prediksi-telur').textContent = totalTelur.toLocaleString() + ' butir';
+            document.getElementById('prediksi-larva').textContent = larva.toLocaleString() + ' ekor';
+            document.getElementById('benih-siap').textContent = benih.toLocaleString() + ' ekor';
+            document.getElementById('result-larva').classList.add('show');
+        }
+        
+        function hitungBiaya() {
+            const jumlahKolam = parseInt(document.getElementById('jumlah-kolam').value) || 4;
+            const target = parseFloat(document.getElementById('target-produksi').value) || 200;
+            
+            // Estimasi biaya per kolam
+            const investasiPerKolam = 2500000; // Rp 2.5 juta per kolam
+            const operasionalPerKolam = 1500000; // Rp 1.5 juta per kolam
+            const hargaJualPerKg = 25000; // Rp 25.000 per kg
+            
+            const totalInvestasi = investasiPerKolam * jumlahKolam;
+            const totalOperasional = operasionalPerKolam * jumlahKolam;
+            const totalBiaya = totalInvestasi + totalOperasional;
+            const totalProduksi = target * jumlahKolam;
+            const pendapatan = totalProduksi * hargaJualPerKg;
+            const laba = pendapatan - totalBiaya;
+            
+            document.getElementById('investasi').textContent = 'Rp ' + totalInvestasi.toLocaleString();
+            document.getElementById('operasional').textContent = 'Rp ' + totalOperasional.toLocaleString();
+            document.getElementById('total-biaya').textContent = 'Rp ' + totalBiaya.toLocaleString();
+            document.getElementById('pendapatan').textContent = 'Rp ' + pendapatan.toLocaleString();
+            document.getElementById('estimasi-laba').textContent = 'Rp ' + laba.toLocaleString();
+            document.getElementById('result-biaya').classList.add('show');
+        }
+    </script>
+</body>
+</html>
